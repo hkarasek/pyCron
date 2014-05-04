@@ -62,20 +62,22 @@ def exit_gracefully(signum, frame):
 
 
 class Log:
-	def __init__(self, confFile, logAll=False):
-		self.f = open(confFile, 'a')
+	def __init__(self, logFile, logAll=False):
+		self.f = open(logFile, 'a')
 		self.logAll = logAll
 
 	def error(self, link):
 		logMes = '(' + datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ')\tdown\t\t' + str(link) + '\n'
 		print(logMes, end='')
 		self.f.write(logMes)
+		self.f.flush()
 
 	def info(self, link):
 		logMes = '(' + datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ')\tsuccess\t\t' + str(link) + '\n'
 		print(logMes, end='')
-		if self.logAll == True:
+		if self.logAll:
 			self.f.write(logMes)
+			self.f.flush()
 
 	def __del__(self):
 		self.f.close()
@@ -83,7 +85,7 @@ class Log:
 
 CONF = loadConf()
 pprint(CONF)
-log = Log(LOG_FILE)
+log = Log(LOG_FILE, logAll=False)
 
 original_sigint = signal.getsignal(signal.SIGINT)
 signal.signal(signal.SIGINT, exit_gracefully)
